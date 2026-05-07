@@ -40,6 +40,7 @@ class JwtChannelInterceptorTest {
 
     private Message<byte[]> connectMessage(String authHeader) {
         StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.CONNECT);
+        accessor.setLeaveMutable(true);
         if (authHeader != null) accessor.addNativeHeader("Authorization", authHeader);
         return MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
     }

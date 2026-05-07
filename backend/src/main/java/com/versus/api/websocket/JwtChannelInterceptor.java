@@ -56,7 +56,9 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
                     List.of(new SimpleGrantedAuthority("ROLE_" + role)));
             accessor.setUser(auth);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new MessageDeliveryException("Invalid JWT", e);
+            MessageDeliveryException ex = new MessageDeliveryException("Invalid JWT");
+            ex.initCause(e);
+            throw ex;
         }
         return message;
     }

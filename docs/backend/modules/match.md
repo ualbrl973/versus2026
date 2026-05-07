@@ -427,6 +427,7 @@ Tabla: matchmaking_queue
 
 ---
 
+
 ## Pruebas
 
 ### Backend
@@ -453,6 +454,20 @@ Dos navegadores logueados como `playerA` y `playerB`:
 4. Tras el countdown ambos ven banner "¡PARTIDA INICIADA!" (la UI del modo es trabajo de PR #91).
 5. Si A pulsa CANCELAR antes del countdown, B ve "El rival ha abandonado" y vuelve a `/play/select` tras 2 s.
 6. Refrescar la pestaña de A en `/play/lobby/:id` reconstruye el estado vía `GET /api/matches/{id}/lobby` + reconexión WS, sin afectar a B.
+
+## WebSocket
+
+La capa de transport en tiempo real (endpoint `/ws`, autenticación JWT en `CONNECT`, convenciones de canales `/topic`, `/user/queue` y `/app`, envelope estándar `MatchEventEnvelope`) está documentada en su módulo propio:
+
+→ **[Módulo: WebSocket multijugador](websocket.md)** (Sprint 3, PR #89)
+
+Resumen para este módulo:
+- Suscripción compartida de la partida: `/topic/match/{matchId}`
+- Notificaciones privadas al jugador: `/user/queue/match`
+- Envío de acciones del cliente: `/app/match/answer`, `/app/match/ready`, `/app/match/abandon`, `/app/match/sabotage`
+
+Los handlers concretos (`MatchWebSocketController`) se añaden a este módulo en PR #90 y siguientes.
+
 
 ---
 

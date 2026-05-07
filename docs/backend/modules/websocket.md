@@ -7,6 +7,7 @@ Estado:
 - ✅ Handlers de lobby/matchmaking (PR #90, ver [módulo match](match.md)).
 - 🚧 Handlers de modos multijugador (Binary Duel #91, Precision Duel #92, Sabotaje #93).
 
+
 ---
 
 ## Responsabilidad
@@ -85,6 +86,12 @@ classDiagram
         +of(type, matchId, payload)$ MatchEventEnvelope~T~
     }
 
+    class EchoController {
+        <<Controller>>
+        <<TODO: borrar al cerrar PR #90>>
+        +ping(Principal, String) Map
+    }
+
     class JwtService {
         <<Service · módulo auth>>
         +parse(String) Claims
@@ -92,9 +99,12 @@ classDiagram
 
     WebSocketConfig --> JwtChannelInterceptor : registra en inbound channel
     JwtChannelInterceptor --> JwtService : valida tokens
-```
 
+```
 > El `EchoController` que existió como smoke test del PR #89 fue eliminado al cerrar el PR #90; los handlers reales viven ahora en [`MatchWebSocketController`](match.md#endpoints-rest) (`/app/match/ready`, `/app/match/unready`, `/app/match/abandon`).
+
+
+    EchoController ..> MatchEventEnvelope : (futuros handlers lo usarán)
 
 ---
 
@@ -282,3 +292,4 @@ Sin token o con un token modificado deberías ver el frame ERROR `Missing Author
 2. **Principal = UUID del usuario.** Mismo criterio que `JwtAuthFilter` HTTP. Permite que cualquier handler haga `UUID.fromString(principal.getName())` sin tocar BD.
 3. **No se confía en datos de identidad enviados por el cliente.** El payload nunca lleva "yo soy el user X" — siempre se usa el `Principal` del frame.
 4. **Borrado del Echo.** El `EchoController` que existió en PR #89 como smoke test se eliminó al cerrar PR #90, sustituido por `MatchWebSocketController`.
+

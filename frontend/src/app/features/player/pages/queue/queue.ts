@@ -4,21 +4,11 @@ import { Subscription } from 'rxjs';
 import { TopbarComponent } from '../../../../shared/components/layout/topbar/topbar';
 import { MatchService } from '../../../../core/services/match.service';
 import { WebSocketService } from '../../../../core/services/websocket.service';
-import { GameMode } from '../../../../core/models/match.models';
-
-const MODE_KEY_TO_MODE: Record<string, GameMode> = {
-  binary: 'BINARY_DUEL',
-  pduel: 'PRECISION_DUEL',
-  sabotage: 'SABOTAGE',
-};
-
-const MODE_LABELS: Record<GameMode, string> = {
-  SURVIVAL: 'Supervivencia',
-  PRECISION: 'Precisión',
-  BINARY_DUEL: 'Duelo binario',
-  PRECISION_DUEL: 'Duelo de precisión',
-  SABOTAGE: 'Sabotaje',
-};
+import {
+  GameMode,
+  MODE_KEY_TO_MODE,
+  MODE_LABELS,
+} from '../../../../core/models/match.models';
 
 @Component({
   selector: 'app-queue',

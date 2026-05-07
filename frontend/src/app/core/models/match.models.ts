@@ -56,3 +56,17 @@ export interface MatchStartPayload {
   matchId: string;
   mode: GameMode;
 }
+
+export const MODE_LABELS: Record<GameMode, string> = {
+  SURVIVAL: 'Supervivencia',
+  PRECISION: 'Precisión',
+  BINARY_DUEL: 'Duelo binario',
+  PRECISION_DUEL: 'Duelo de precisión',
+  SABOTAGE: 'Sabotaje',
+};
+
+export const MODE_KEY_TO_MODE: Record<string, GameMode> = {
+  binary: 'BINARY_DUEL',
+  pduel: 'PRECISION_DUEL',
+  sabotage: 'SABOTAGE',
+};

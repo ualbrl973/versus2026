@@ -220,21 +220,18 @@ Tabla: matchmaking_queue
 
 ---
 
-## WebSocket (Sprint 3 — pendiente)
+## WebSocket
 
-El canal de comunicación en tiempo real usará STOMP sobre WebSocket:
+La capa de transport en tiempo real (endpoint `/ws`, autenticación JWT en `CONNECT`, convenciones de canales `/topic`, `/user/queue` y `/app`, envelope estándar `MatchEventEnvelope`) está documentada en su módulo propio:
 
-```
-Endpoint:  ws://localhost:8080/ws
-Suscripciones:
-  /user/queue/match        → mensajes privados al jugador
-  /topic/match/{matchId}  → sala compartida de la partida
-Envío desde cliente:
-  /app/match/answer        → enviar respuesta
-  /app/match/ready         → confirmar listo para empezar
-```
+→ **[Módulo: WebSocket multijugador](websocket.md)** (Sprint 3, PR #89)
 
-Los mensajes del servidor seguirán el mismo formato de DTO que la API REST.
+Resumen para este módulo:
+- Suscripción compartida de la partida: `/topic/match/{matchId}`
+- Notificaciones privadas al jugador: `/user/queue/match`
+- Envío de acciones del cliente: `/app/match/answer`, `/app/match/ready`, `/app/match/abandon`, `/app/match/sabotage`
+
+Los handlers concretos (`MatchWebSocketController`) se añaden a este módulo en PR #90 y siguientes.
 
 ---
 

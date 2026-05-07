@@ -12,6 +12,7 @@
 | Usuarios | [modules/users.md](modules/users.md) | ✅ Sprint 1-2 |
 | Preguntas | [modules/questions.md](modules/questions.md) | ✅ Sprint 1-2 |
 | Juego singleplayer | [modules/game.md](modules/game.md) | ✅ Sprint 1-2 |
+| WebSocket multijugador | [modules/websocket.md](modules/websocket.md) | ✅ Sprint 3 (PR #89) |
 | Partidas & matchmaking | [modules/match.md](modules/match.md) | 🚧 Sprint 3 |
 | Estadísticas & ranking | [modules/stats.md](modules/stats.md) | ✅ Sprint 1-2 |
 | Moderación | [modules/moderation.md](modules/moderation.md) | 🚧 Sprint 4 |

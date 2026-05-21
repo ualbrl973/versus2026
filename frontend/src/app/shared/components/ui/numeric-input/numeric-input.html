@@ -1,0 +1,21 @@
+<div class="vs-numeric-input">
+  @if (noiseHint !== null) {
+    <span class="vs-numeric-input__noise" title="Ofuscación activa">±{{ noiseHint }}%</span>
+  }
+  <input
+    type="number"
+    inputmode="decimal"
+    class="vs-numeric-input__field"
+    [disabled]="disabled"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    (keydown.enter)="submit()"
+    [placeholder]="placeholder" />
+  <button
+    type="button"
+    class="btn btn--primary btn--lg"
+    [disabled]="!canSubmit()"
+    (click)="submit()">
+    {{ submitLabel }}
+  </button>
+</div>

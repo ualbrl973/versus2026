@@ -1,9 +1,9 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { GameService } from '../../../../core/services/game.service';
 import { AchievementToastService } from '../../../../core/services/achievement-toast.service';
+import { NumericInputComponent } from '../../../../shared/components/ui/numeric-input/numeric-input';
 import {
   PrecisionAnswerResponse,
   QuestionNumeric,
@@ -14,7 +14,7 @@ type Phase = 'idle' | 'feedback' | 'loading';
 @Component({
   selector: 'app-precision',
   standalone: true,
-  imports: [RouterLink, FormsModule, DecimalPipe],
+  imports: [RouterLink, DecimalPipe, NumericInputComponent],
   templateUrl: './precision.html',
   styleUrl: './precision.scss',
 })
@@ -23,6 +23,8 @@ export class Precision implements OnInit {
   private readonly router = inject(Router);
   private readonly achievementToasts = inject(AchievementToastService);
 
+  @ViewChild(NumericInputComponent) private input?: NumericInputComponent;
+
   lives = signal(100);
   rounds = signal(0);
   phase = signal<Phase>('loading');
@@ -30,24 +32,22 @@ export class Precision implements OnInit {
 
   question = signal<QuestionNumeric | null>(null);
   sessionId = signal<string | null>(null);
-  inputValue = signal<string>('');
 
   feedback = signal<{ correctValue: number; deviationPercent: number; lifeDelta: number } | null>(null);
   private pendingNext: QuestionNumeric | null = null;
 
   readonly lifeBarStyle = computed(() => `width: ${Math.max(0, Math.min(100, this.lives()))}%`);
+  readonly inputDisabled = computed(() => this.phase() !== 'idle');
 
   ngOnInit(): void {
     this.start();
   }
 
-  submit(): void {
+  submit(value: number): void {
     if (this.phase() !== 'idle') return;
     const q = this.question();
     const sid = this.sessionId();
-    const raw = this.inputValue().replace(',', '.').trim();
-    const value = Number(raw);
-    if (!q || !sid || !Number.isFinite(value)) return;
+    if (!q || !sid) return;
 
     this.phase.set('loading');
     this.errorMessage.set(null);
@@ -68,7 +68,7 @@ export class Precision implements OnInit {
       this.pendingNext = null;
     }
     this.feedback.set(null);
-    this.inputValue.set('');
+    this.input?.reset();
     this.phase.set('idle');
   }
 
@@ -86,7 +86,7 @@ export class Precision implements OnInit {
         this.question.set(res.question);
         this.lives.set(100);
         this.rounds.set(0);
-        this.inputValue.set('');
+        this.input?.reset();
         this.phase.set('idle');
       },
       error: () => {
@@ -118,6 +118,8 @@ export class Precision implements OnInit {
           this.router.navigate(['/play/result'], {
             state: {
               mode: 'PRECISION',
+              multiplayer: false,
+              outcome: this.lives() > 0 ? 'WIN' : 'LOSS',
               score: Math.max(0, this.lives()),
               bestStreak: 0,
               rounds: finalRounds,

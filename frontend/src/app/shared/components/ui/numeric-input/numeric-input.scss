@@ -1,0 +1,42 @@
+.vs-numeric-input {
+  position: relative;
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 480px;
+  align-items: stretch;
+}
+
+.vs-numeric-input__field {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: var(--vs-text-primary, #fff);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.5rem;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+    border-color: var(--vs-accent-blue, #3498db);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.vs-numeric-input__noise {
+  position: absolute;
+  top: -1.1rem;
+  right: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  background: rgba(155, 89, 182, 0.15);
+  color: var(--vs-accent-purple, #9b59b6);
+  border: 1px solid var(--vs-accent-purple, #9b59b6);
+}

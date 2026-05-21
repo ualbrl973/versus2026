@@ -1,0 +1,73 @@
+<div class="vs-duel"
+     [class.is-answered]="phase() === 'answered'"
+     [class.is-between]="phase() === 'between'">
+
+  <div class="vs-hud">
+    <div class="vs-hud__side">
+      <span class="vs-pill vs-pill--err"><span class="vs-pill__dot"></span>DUELO BINARIO</span>
+      <div class="vs-mono">Ronda {{ roundNumber() }} / 10</div>
+    </div>
+    <div class="vs-hud__center">
+      <div class="vs-timer" [class.is-low]="secondsLeft() <= 5">{{ secondsLeft() }}s</div>
+    </div>
+    <div class="vs-hud__side">
+      <a routerLink="/play/select" class="btn btn--ghost btn--sm">ABANDONAR</a>
+    </div>
+  </div>
+
+  <div class="vs-duel__versus">
+    <div class="vs-duel__player vs-duel__player--self">
+      <div class="vs-q-label">TÚ</div>
+      <div class="vs-lifebar">
+        @for (i of [0,1,2]; track i) {
+          <span class="vs-lifebar__heart" [class.vs-lifebar__heart--lost]="i >= selfLives()"></span>
+        }
+      </div>
+      <div class="vs-stat-label vs-mono">Puntos: {{ selfScore() }} · Racha: {{ selfStreak() }}</div>
+    </div>
+    <div class="vs-duel__vs">VS</div>
+    <div class="vs-duel__player vs-duel__player--opp">
+      <div class="vs-q-label">RIVAL</div>
+      <div class="vs-lifebar">
+        @for (i of [0,1,2]; track i) {
+          <span class="vs-lifebar__heart" [class.vs-lifebar__heart--lost]="i >= oppLives()"></span>
+        }
+      </div>
+      <div class="vs-stat-label vs-mono">Puntos: {{ oppScore() }}</div>
+    </div>
+  </div>
+
+  @if (errorMsg()) {
+    <div class="vs-error">{{ errorMsg() }}</div>
+  }
+
+  @if (currentQuestion(); as q) {
+    <div class="vs-duel__question">
+      <div class="vs-q-label">CATEGORÍA · {{ q.category }}</div>
+      <h2 class="vs-q-text vs-display">{{ q.text }}</h2>
+    </div>
+
+    <div class="vs-binary-arena">
+      @for (opt of q.options; track opt.id) {
+        <button
+          type="button"
+          [class]="optionClass(opt.id)"
+          [disabled]="phase() !== 'idle'"
+          (click)="pick(opt.id)">
+          <span class="vs-bopt__text">{{ opt.text }}</span>
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="vs-loading">Esperando primera pregunta…</div>
+  }
+
+  @if (lastRoundResult(); as rr) {
+    @if (phase() === 'between') {
+      <div class="vs-feedback">
+        <div class="vs-feedback__title vs-display">RONDA {{ rr.roundNumber }}</div>
+        <div class="vs-feedback__sub vs-mono">Siguiente ronda en breve…</div>
+      </div>
+    }
+  }
+</div>

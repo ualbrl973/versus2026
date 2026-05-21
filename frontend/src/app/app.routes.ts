@@ -59,6 +59,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/precision/pages/precision/precision').then(m => m.Precision),
       },
       {
+        path: 'binary-duel/:matchId',
+        loadComponent: () => import('./features/binary-duel/pages/binary-duel/binary-duel').then(m => m.BinaryDuel),
+      },
+      {
         path: 'result',
         loadComponent: () => import('./features/player/pages/result/result').then(m => m.Result),
       },

@@ -1,0 +1,88 @@
+.vs-duel {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 1.5rem;
+  align-items: stretch;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.vs-hud {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.vs-hud__side { display: flex; align-items: center; gap: 0.75rem; }
+.vs-hud__center { justify-self: center; }
+
+.vs-timer {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--vs-accent-blue, #3498db);
+  transition: color 200ms ease;
+
+  &.is-low {
+    color: var(--vs-accent-red, #e74c3c);
+    animation: pulse 1s infinite;
+  }
+}
+
+.vs-duel__versus {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+}
+
+.vs-duel__player { text-align: center; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
+.vs-duel__vs {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  color: var(--vs-text-muted);
+}
+
+.vs-duel__question { text-align: center; }
+.vs-binary-arena {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.vs-error {
+  padding: 0.6rem 1rem;
+  background: rgba(231, 76, 60, 0.12);
+  border: 1px solid var(--vs-accent-red, #e74c3c);
+  color: var(--vs-accent-red, #e74c3c);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.vs-loading {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--vs-text-secondary, #aaa);
+}
+
+.vs-feedback {
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}

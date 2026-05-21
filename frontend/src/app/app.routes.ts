@@ -67,6 +67,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/precision-duel/pages/precision-duel/precision-duel').then(m => m.PrecisionDuel),
       },
       {
+        path: 'sabotage/:matchId',
+        loadComponent: () => import('./features/sabotage/pages/sabotage/sabotage').then(m => m.Sabotage),
+      },
+      {
         path: 'result',
         loadComponent: () => import('./features/player/pages/result/result').then(m => m.Result),
       },

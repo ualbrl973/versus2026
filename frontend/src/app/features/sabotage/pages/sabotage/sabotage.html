@@ -1,0 +1,77 @@
+<div class="vs-sabotage"
+     [class.is-answered]="phase() === 'answered'"
+     [class.is-between]="phase() === 'between'"
+     [class.has-time-bomb]="activeEffectAgainstSelf() === 'TIME_BOMB'">
+
+  <div class="vs-hud">
+    <div class="vs-hud__side">
+      <span class="vs-pill vs-pill--purple"><span class="vs-pill__dot"></span>SABOTAJE</span>
+      <div class="vs-mono">Ronda {{ roundNumber() }} / 10</div>
+    </div>
+    <div class="vs-hud__center">
+      <div class="vs-timer" [class.is-low]="secondsLeft() <= 5">{{ secondsLeft() }}s</div>
+    </div>
+    <div class="vs-hud__side">
+      <a routerLink="/play/select" class="btn btn--ghost btn--sm">ABANDONAR</a>
+    </div>
+  </div>
+
+  <div class="vs-duel__versus">
+    <div class="vs-duel__player vs-duel__player--self">
+      <div class="vs-q-label">TÚ</div>
+      <div class="vs-lifebar">
+        @for (i of [0,1,2]; track i) {
+          <span class="vs-lifebar__heart" [class.vs-lifebar__heart--lost]="i >= selfLives()"></span>
+        }
+      </div>
+      <div class="vs-stat-label vs-mono">Racha: {{ selfStreak() }}</div>
+      @if (activeEffectAgainstSelf(); as eff) {
+        <app-effect-indicator [type]="eff" />
+      }
+    </div>
+    <div class="vs-duel__vs">VS</div>
+    <div class="vs-duel__player vs-duel__player--opp">
+      <div class="vs-q-label">RIVAL</div>
+      <div class="vs-lifebar">
+        @for (i of [0,1,2]; track i) {
+          <span class="vs-lifebar__heart" [class.vs-lifebar__heart--lost]="i >= oppLives()"></span>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (errorMsg()) {
+    <div class="vs-error">{{ errorMsg() }}</div>
+  }
+  @if (notice(); as n) {
+    <div class="vs-notice">{{ n }}</div>
+  }
+
+  <div class="vs-sabotage__arena">
+    <div class="vs-sabotage__center">
+      @if (currentQuestion(); as q) {
+        <div class="vs-duel__question">
+          <div class="vs-q-label">CATEGORÍA · {{ q.category }}</div>
+          <h2 class="vs-q-text vs-display">{{ q.text }}</h2>
+        </div>
+        <div class="vs-binary-arena">
+          @for (opt of q.options; track opt.id) {
+            <button
+              type="button"
+              [class]="optionClass(opt.id)"
+              [disabled]="phase() !== 'idle'"
+              (click)="pick(opt.id)">
+              <span class="vs-bopt__text">{{ opt.text }}</span>
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="vs-loading">Esperando primera pregunta…</div>
+      }
+    </div>
+    <app-sabotage-panel
+      [tokens]="selfTokens()"
+      [canActivate]="canActivateSabotage()"
+      (activate)="activateSabotage($event)" />
+  </div>
+</div>

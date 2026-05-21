@@ -79,8 +79,8 @@
 | Sprint | Contenido | Estado |
 |---|---|---|
 | 1-2 | Auth, usuarios, preguntas, juego singleplayer, stats | ✅ |
-| 3 | WebSockets, matchmaking, modos PvP | 🚧 |
-| 4 | Historial, ranking, moderación, admin, scraping | 🚧 |
+| 3 | WebSockets, lobby, matchmaking | ✅ |
+| 4 | Modos PvP (Binary Duel, Precision Duel, Sabotaje), historial, ranking, moderación, admin, scraping | 🚧 |
 
 ## Funcionalidades recientes
 

@@ -1,0 +1,93 @@
+<div class="vs-duel"
+     [class.is-answered]="phase() === 'answered'"
+     [class.is-between]="phase() === 'between'">
+
+  <div class="vs-hud">
+    <div class="vs-hud__side">
+      <span class="vs-pill vs-pill--info"><span class="vs-pill__dot"></span>DUELO DE PRECISIÓN</span>
+      <div class="vs-mono">Ronda {{ roundNumber() }} / 10</div>
+    </div>
+    <div class="vs-hud__center">
+      <div class="vs-timer" [class.is-low]="secondsLeft() <= 5">{{ secondsLeft() }}s</div>
+    </div>
+    <div class="vs-hud__side">
+      <a routerLink="/play/select" class="btn btn--ghost btn--sm">ABANDONAR</a>
+    </div>
+  </div>
+
+  <div class="vs-duel__versus">
+    <div class="vs-duel__player vs-duel__player--self">
+      <div class="vs-q-label">TÚ</div>
+      <div class="vs-pduel__lifebar">
+        <div class="vs-pduel__lifebar-fill vs-pduel__lifebar-fill--self" [style.width.%]="selfLifePct()"></div>
+      </div>
+      <span class="vs-mono">{{ selfLives() }} / 3</span>
+    </div>
+    <div class="vs-duel__vs">VS</div>
+    <div class="vs-duel__player vs-duel__player--opp">
+      <div class="vs-q-label">RIVAL</div>
+      <div class="vs-pduel__lifebar">
+        <div class="vs-pduel__lifebar-fill vs-pduel__lifebar-fill--opp" [style.width.%]="oppLifePct()"></div>
+      </div>
+      <span class="vs-mono">{{ oppLives() }} / 3</span>
+    </div>
+  </div>
+
+  @if (errorMsg()) {
+    <div class="vs-error">{{ errorMsg() }}</div>
+  }
+
+  @if (currentQuestion(); as q) {
+    <div class="vs-duel__question">
+      <div class="vs-q-label">CATEGORÍA · {{ q.category }}</div>
+      <h2 class="vs-q-text vs-display">{{ q.text }}</h2>
+      @if (q.unit) {
+        <div class="vs-q-unit">Unidad: <strong>{{ q.unit }}</strong></div>
+      }
+    </div>
+
+    <vs-numeric-input
+      [unit]="q.unit"
+      [disabled]="inputDisabled()"
+      (submitted)="submit($event)" />
+  } @else {
+    <div class="vs-loading">Esperando primera pregunta…</div>
+  }
+
+  @if (phase() === 'between' && lastRoundOutcomes().length > 0) {
+    <div class="vs-pduel__reveal">
+      <div class="vs-feedback__title vs-display">RONDA {{ roundNumber() }}</div>
+      @if (correctValue() !== null) {
+        <div class="vs-feedback__sub">
+          Valor real: <strong class="vs-mono">{{ correctValue() }}</strong>
+        </div>
+      }
+      <div class="vs-pduel__compare">
+        @if (selfOutcome(); as so) {
+          <div class="vs-pduel__compare-col"
+               [class.is-winner]="roundWinner() === 'self'">
+            <div class="vs-q-label">TÚ</div>
+            <div class="vs-mono">{{ so.valueGiven }}</div>
+            @if (so.deviation !== null) {
+              <div class="vs-stat-label">Desviación: {{ so.deviation | number:'1.0-2' }}%</div>
+            } @else {
+              <div class="vs-stat-label">Sin respuesta</div>
+            }
+          </div>
+        }
+        @if (oppOutcome(); as oo) {
+          <div class="vs-pduel__compare-col"
+               [class.is-winner]="roundWinner() === 'opp'">
+            <div class="vs-q-label">RIVAL</div>
+            <div class="vs-mono">{{ oo.valueGiven }}</div>
+            @if (oo.deviation !== null) {
+              <div class="vs-stat-label">Desviación: {{ oo.deviation | number:'1.0-2' }}%</div>
+            } @else {
+              <div class="vs-stat-label">Sin respuesta</div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

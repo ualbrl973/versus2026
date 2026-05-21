@@ -402,8 +402,15 @@ public class DuelOrchestrator {
 
         Map<UUID, Double> avgDeviationByUser = new HashMap<>();
         if (duel.getMode() == GameMode.PRECISION_DUEL) {
-            // Computamos avg deviation por jugador on the fly (no requiere DB).
-            duel.getPlayers().keySet().forEach(uid -> avgDeviationByUser.put(uid, null));
+            // PrecisionDuelEngine acumula deviationSum/deviationCount en cada runtime.
+            duel.getPlayers().values().forEach(rt -> {
+                if (rt.getDeviationCount() > 0) {
+                    avgDeviationByUser.put(rt.getUserId(),
+                            rt.getDeviationSum() / rt.getDeviationCount());
+                } else {
+                    avgDeviationByUser.put(rt.getUserId(), null);
+                }
+            });
         }
 
         Map<UUID, List<AchievementResponse>> unlocked;

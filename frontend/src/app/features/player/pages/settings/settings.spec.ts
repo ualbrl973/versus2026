@@ -7,6 +7,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { AchievementService } from '../../../../core/services/achievement.service';
 import { UserService } from '../../../../core/services/user.service';
 import { StatsService } from '../../../../core/services/stats.service';
+import { audioService } from '../../../../core/services/AudioService';
 
 describe('Settings', () => {
   let component: Settings;
@@ -37,6 +38,11 @@ describe('Settings', () => {
   };
 
   beforeEach(async () => {
+    localStorage.clear();
+    audioService.stopBgm();
+    audioService.setSfxEnabled(true);
+    audioService.setBgmEnabled(true);
+    audioService.setVolume(0.8, 0.4);
     localStorage.clear();
     userService = {
       me: vi.fn(() => of(me)),
@@ -99,13 +105,18 @@ describe('Settings', () => {
   });
 
   it('should persist audio preferences in localStorage', () => {
-    component.audioForm.patchValue({ sfx: 25, bgm: 60, muted: true, reducedFeedback: false });
+    component.audioForm.patchValue({
+      sfxEnabled: false,
+      bgmEnabled: true,
+      sfxVolume: 25,
+      bgmVolume: 60,
+    });
 
-    expect(JSON.parse(localStorage.getItem('vs.audioPrefs') ?? '{}')).toEqual({
-      sfx: 25,
-      bgm: 60,
-      muted: true,
-      reducedFeedback: false,
+    expect(JSON.parse(localStorage.getItem('audio_settings') ?? '{}')).toEqual({
+      sfxEnabled: false,
+      bgmEnabled: true,
+      sfxVolume: 0.25,
+      bgmVolume: 0.6,
     });
   });
 });

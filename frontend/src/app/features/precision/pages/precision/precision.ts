@@ -1,9 +1,10 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { GameService } from '../../../../core/services/game.service';
 import { AchievementToastService } from '../../../../core/services/achievement-toast.service';
+import { audioService } from '../../../../core/services/AudioService';
 import {
   PrecisionAnswerResponse,
   QuestionNumeric,
@@ -18,7 +19,7 @@ type Phase = 'idle' | 'feedback' | 'loading';
   templateUrl: './precision.html',
   styleUrl: './precision.scss',
 })
-export class Precision implements OnInit {
+export class Precision implements OnInit, OnDestroy {
   private readonly game = inject(GameService);
   private readonly router = inject(Router);
   private readonly achievementToasts = inject(AchievementToastService);
@@ -39,6 +40,10 @@ export class Precision implements OnInit {
 
   ngOnInit(): void {
     this.start();
+  }
+
+  ngOnDestroy(): void {
+    audioService.stopBgm();
   }
 
   submit(): void {
@@ -88,6 +93,7 @@ export class Precision implements OnInit {
         this.rounds.set(0);
         this.inputValue.set('');
         this.phase.set('idle');
+        audioService.playBgm('bgm_game');
       },
       error: () => {
         this.phase.set('idle');
@@ -105,12 +111,15 @@ export class Precision implements OnInit {
       lifeDelta: res.lifeDelta,
     });
     this.phase.set('feedback');
+    audioService.play(res.lifeDelta >= 0 ? 'correct' : 'wrong');
 
     if (res.nextQuestion && res.nextQuestion.type === 'NUMERIC') {
       this.pendingNext = res.nextQuestion;
     }
 
     if (res.gameOver) {
+      audioService.play('game_over');
+      audioService.stopBgm();
       this.achievementToasts.showMany(res.achievementsUnlocked);
       const finalRounds = this.rounds();
       setTimeout(

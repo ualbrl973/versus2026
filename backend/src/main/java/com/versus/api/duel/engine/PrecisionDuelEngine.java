@@ -27,8 +27,9 @@ import java.util.UUID;
  * - deviation% = |value - correctValue| / correctValue * 100.
  * - Quien tenga MENOR desviacion gana el round (no pierde vida).
  * - El de mayor desviacion recibe lifeDelta = -ceil(abs(devA - devB) * FACTOR).
- * - Si no respondio antes del deadline → -3 vidas (penalizacion alta para evitar
- *   estrategia "no responder"). Ademas su deviation cuenta como 100% para el promedio.
+ * - Si no respondio antes del deadline → -2 vidas (mas duro que un fallo, pero sin
+ *   ser K.O. al primer timeout con INITIAL_LIVES=3). Su deviation cuenta como 100%
+ *   para el promedio final.
  * - Acumulamos deviationSum/deviationCount en el runtime para que el orchestrator
  *   pueda computar avgDeviation en finalize → statsService.recordFinishedGame().
  */
@@ -36,7 +37,7 @@ import java.util.UUID;
 public class PrecisionDuelEngine implements DuelEngine {
 
     private static final BigDecimal FACTOR = new BigDecimal("0.02");
-    private static final int TIMEOUT_PENALTY = -3;
+    private static final int TIMEOUT_PENALTY = -2;
     private static final double TIMEOUT_DEVIATION = 100.0;
 
     @Override

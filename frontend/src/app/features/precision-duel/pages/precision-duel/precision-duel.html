@@ -1,35 +1,47 @@
 <div class="vs-duel"
-     [class.is-answered]="phase() === 'answered'"
-     [class.is-between]="phase() === 'between'">
+     [class.is-correct]="roundWinner() === 'self'"
+     [class.is-wrong]="roundWinner() === 'opp'">
 
+  <!-- HUD -->
   <div class="vs-hud">
-    <div class="vs-hud__side">
-      <span class="vs-pill vs-pill--info"><span class="vs-pill__dot"></span>DUELO DE PRECISIÓN</span>
-      <div class="vs-mono">Ronda {{ roundNumber() }} / 10</div>
+    <div class="vs-hud__left">
+      <span class="vs-pill vs-pill--info">
+        <span class="vs-pill__dot"></span>DUELO DE PRECISIÓN
+      </span>
+      <div class="vs-mono vs-hud__round">Ronda {{ roundNumber() || '—' }} / 10</div>
     </div>
+
     <div class="vs-hud__center">
-      <div class="vs-timer" [class.is-low]="secondsLeft() <= 5">{{ secondsLeft() }}s</div>
+      <div class="vs-timer-big" [class.is-low]="secondsLeft() <= 5">
+        {{ secondsLeft() }}<span class="vs-timer-big__unit">s</span>
+      </div>
     </div>
-    <div class="vs-hud__side">
+
+    <div class="vs-hud__right">
       <a routerLink="/play/select" class="btn btn--ghost btn--sm">ABANDONAR</a>
     </div>
   </div>
 
-  <div class="vs-duel__versus">
-    <div class="vs-duel__player vs-duel__player--self">
-      <div class="vs-q-label">TÚ</div>
+  <!-- Versus bar con lifebars -->
+  <div class="vs-versus-bar">
+    <div class="vs-versus-bar__side vs-versus-bar__side--self">
+      <div class="vs-versus-bar__label">TÚ</div>
       <div class="vs-pduel__lifebar">
         <div class="vs-pduel__lifebar-fill vs-pduel__lifebar-fill--self" [style.width.%]="selfLifePct()"></div>
       </div>
-      <span class="vs-mono">{{ selfLives() }} / 3</span>
+      <div class="vs-versus-bar__lives vs-mono">{{ selfLives() }}/3</div>
     </div>
-    <div class="vs-duel__vs">VS</div>
-    <div class="vs-duel__player vs-duel__player--opp">
-      <div class="vs-q-label">RIVAL</div>
+
+    <div class="vs-versus-bar__center">
+      <span class="vs-versus-bar__vs">VS</span>
+    </div>
+
+    <div class="vs-versus-bar__side vs-versus-bar__side--opp">
+      <div class="vs-versus-bar__label">RIVAL</div>
       <div class="vs-pduel__lifebar">
         <div class="vs-pduel__lifebar-fill vs-pduel__lifebar-fill--opp" [style.width.%]="oppLifePct()"></div>
       </div>
-      <span class="vs-mono">{{ oppLives() }} / 3</span>
+      <div class="vs-versus-bar__lives vs-mono">{{ oppLives() }}/3</div>
     </div>
   </div>
 
@@ -38,56 +50,80 @@
   }
 
   @if (currentQuestion(); as q) {
-    <div class="vs-duel__question">
-      <div class="vs-q-label">CATEGORÍA · {{ q.category }}</div>
+    <div class="vs-duel-question">
+      <div class="vs-q-label">CATEGORÍA · {{ q.category | uppercase }}</div>
       <h2 class="vs-q-text vs-display">{{ q.text }}</h2>
       @if (q.unit) {
-        <div class="vs-q-unit">Unidad: <strong>{{ q.unit }}</strong></div>
+        <div class="vs-q-unit">
+          UNIDAD <strong class="vs-mono">{{ q.unit }}</strong>
+        </div>
       }
     </div>
 
-    <vs-numeric-input
-      [unit]="q.unit"
-      [disabled]="inputDisabled()"
-      (submitted)="submit($event)" />
+    <div class="vs-pduel__input-wrap">
+      <vs-numeric-input
+        [unit]="q.unit"
+        [disabled]="inputDisabled()"
+        (submitted)="submit($event)" />
+    </div>
   } @else {
     <div class="vs-loading">Esperando primera pregunta…</div>
   }
 
+  <!-- Reveal overlay -->
   @if (phase() === 'between' && lastRoundOutcomes().length > 0) {
-    <div class="vs-pduel__reveal">
-      <div class="vs-feedback__title vs-display">RONDA {{ roundNumber() }}</div>
+    @let winner = roundWinner();
+    <div class="vs-feedback-overlay"
+         [class.is-correct]="winner === 'self'"
+         [class.is-wrong]="winner === 'opp'"
+         [class.is-tie]="winner === 'tie'">
+      <div class="vs-feedback-overlay__title">
+        @if (winner === 'self') { ¡GANAS LA RONDA! }
+        @else if (winner === 'opp') { ROUND PARA RIVAL }
+        @else { EMPATE }
+      </div>
+
       @if (correctValue() !== null) {
-        <div class="vs-feedback__sub">
-          Valor real: <strong class="vs-mono">{{ correctValue() }}</strong>
+        <div class="vs-feedback-overlay__sub">
+          VALOR REAL · <strong class="vs-mono">{{ correctValue() }}</strong>
         </div>
       }
-      <div class="vs-pduel__compare">
+
+      <div class="vs-feedback-overlay__compare">
         @if (selfOutcome(); as so) {
-          <div class="vs-pduel__compare-col"
-               [class.is-winner]="roundWinner() === 'self'">
-            <div class="vs-q-label">TÚ</div>
-            <div class="vs-mono">{{ so.valueGiven }}</div>
-            @if (so.deviation !== null) {
-              <div class="vs-stat-label">Desviación: {{ so.deviation | number:'1.0-2' }}%</div>
-            } @else {
-              <div class="vs-stat-label">Sin respuesta</div>
-            }
+          <div class="vs-feedback-overlay__col" [class.is-winner]="winner === 'self'">
+            <div class="vs-feedback-overlay__col-label">TÚ</div>
+            <div class="vs-feedback-overlay__col-value">{{ so.valueGiven ?? '—' }}</div>
+            <div class="vs-feedback-overlay__sub">
+              @if (so.deviation !== null) {
+                Desv. {{ so.deviation | number:'1.0-2' }}%
+              } @else {
+                Sin respuesta
+              }
+            </div>
           </div>
         }
+        <div class="vs-feedback-overlay__vs">VS</div>
         @if (oppOutcome(); as oo) {
-          <div class="vs-pduel__compare-col"
-               [class.is-winner]="roundWinner() === 'opp'">
-            <div class="vs-q-label">RIVAL</div>
-            <div class="vs-mono">{{ oo.valueGiven }}</div>
-            @if (oo.deviation !== null) {
-              <div class="vs-stat-label">Desviación: {{ oo.deviation | number:'1.0-2' }}%</div>
-            } @else {
-              <div class="vs-stat-label">Sin respuesta</div>
-            }
+          <div class="vs-feedback-overlay__col" [class.is-winner]="winner === 'opp'">
+            <div class="vs-feedback-overlay__col-label">RIVAL</div>
+            <div class="vs-feedback-overlay__col-value">{{ oo.valueGiven ?? '—' }}</div>
+            <div class="vs-feedback-overlay__sub">
+              @if (oo.deviation !== null) {
+                Desv. {{ oo.deviation | number:'1.0-2' }}%
+              } @else {
+                Sin respuesta
+              }
+            </div>
           </div>
         }
       </div>
+
+      @if (selfOutcome()?.lifeDelta; as ld) {
+        @if (ld < 0) {
+          <div class="vs-feedback-overlay__delta">{{ ld }} vida{{ ld === -1 ? '' : 's' }}</div>
+        }
+      }
     </div>
   }
 </div>

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, UpperCasePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DuelService } from '../../../../core/services/duel.service';
@@ -21,7 +21,7 @@ type Phase = 'connecting' | 'idle' | 'answered' | 'between' | 'ended';
 @Component({
   selector: 'app-precision-duel',
   standalone: true,
-  imports: [RouterLink, NumericInputComponent, DecimalPipe],
+  imports: [RouterLink, NumericInputComponent, DecimalPipe, UpperCasePipe],
   templateUrl: './precision-duel.html',
   styleUrl: './precision-duel.scss',
 })

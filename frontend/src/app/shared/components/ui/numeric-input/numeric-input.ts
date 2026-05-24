@@ -22,6 +22,9 @@ export class NumericInputComponent {
   @Output() submitted = new EventEmitter<number>();
 
   readonly value = signal<string>('');
+  /** True desde que el usuario pulsa ENVIAR hasta el próximo reset(). */
+  readonly wasSubmitted = signal<boolean>(false);
+
   readonly canSubmit = computed(() => {
     if (this.disabled) return false;
     const raw = this.value().replace(',', '.').trim();
@@ -34,10 +37,12 @@ export class NumericInputComponent {
     if (!this.canSubmit()) return;
     const raw = this.value().replace(',', '.').trim();
     const n = Number(raw);
+    this.wasSubmitted.set(true);
     this.submitted.emit(n);
   }
 
   reset(): void {
     this.value.set('');
+    this.wasSubmitted.set(false);
   }
 }

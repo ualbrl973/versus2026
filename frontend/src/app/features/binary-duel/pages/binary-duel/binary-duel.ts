@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { UpperCasePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DuelService } from '../../../../core/services/duel.service';
@@ -7,6 +8,7 @@ import { WebSocketService } from '../../../../core/services/websocket.service';
 import {
   DuelEvent,
   MatchEndPayload,
+  PlayerRoundOutcome,
   PlayerRuntimeSnapshot,
   QuestionPayload,
   RoundResultPayload,
@@ -23,7 +25,7 @@ interface OpponentMeta {
 @Component({
   selector: 'app-binary-duel',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, UpperCasePipe],
   templateUrl: './binary-duel.html',
   styleUrl: './binary-duel.scss',
 })
@@ -56,6 +58,15 @@ export class BinaryDuel implements OnInit, OnDestroy {
   readonly selfScore = computed(() => this.selfRuntime()?.score ?? 0);
   readonly oppScore = computed(() => this.oppRuntime()?.score ?? 0);
   readonly selfStreak = computed(() => this.selfRuntime()?.currentStreak ?? 0);
+
+  readonly selfOutcome = computed<PlayerRoundOutcome | null>(() => {
+    const id = this.selfId();
+    return this.lastRoundResult()?.outcomes.find((o) => o.userId === id) ?? null;
+  });
+  readonly oppOutcome = computed<PlayerRoundOutcome | null>(() => {
+    const id = this.selfId();
+    return this.lastRoundResult()?.outcomes.find((o) => o.userId !== id) ?? null;
+  });
 
   private sub?: Subscription;
   private timer?: ReturnType<typeof setInterval>;

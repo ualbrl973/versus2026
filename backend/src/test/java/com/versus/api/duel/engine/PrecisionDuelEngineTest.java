@@ -108,7 +108,7 @@ class PrecisionDuelEngineTest {
         assertThat(s.getPlayers().get(B).getCurrentStreak()).isEqualTo(1);
     }
 
-    @DisplayName("Sin respuesta antes del deadline: -3 vidas y deviation=100% para stats")
+    @DisplayName("Sin respuesta antes del deadline: -2 vidas y deviation=100% para stats")
     @Test
     void timeout() {
         DuelMatchState s = match();
@@ -119,7 +119,7 @@ class PrecisionDuelEngineTest {
 
         PlayerRoundOutcome bo = outcome(res, B);
         assertThat(bo.answered()).isFalse();
-        assertThat(bo.lifeDelta()).isEqualTo(-3);
+        assertThat(bo.lifeDelta()).isEqualTo(-2);
         // Suma el 100% al promedio del jugador (penalizacion fuerte)
         assertThat(s.getPlayers().get(B).getDeviationSum()).isEqualTo(100.0);
         assertThat(s.getPlayers().get(B).getDeviationCount()).isEqualTo(1);

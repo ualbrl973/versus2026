@@ -1,52 +1,151 @@
-.vs-sabotage {
+// HUD, versus-bar y opciones (vs-bopt) son globales o se importan desde
+// binary-duel.scss y styles.scss.
+
+.vs-duel {
+  position: relative;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem;
-  gap: 1.25rem;
+  padding: 28px 40px 40px;
+  gap: 1.5rem;
   min-height: 100vh;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
+  background:
+    radial-gradient(ellipse at 50% 0%,   rgba(123,45,139,0.12),  transparent 65%),
+    radial-gradient(ellipse at 50% 100%, rgba(230,57,70,0.05),   transparent 60%),
+    var(--vs-bg-base);
+  isolation: isolate;
+  overflow: hidden;
 
-  &.has-time-bomb .vs-timer {
-    animation: shake 0.3s infinite;
-  }
+  &.is-correct { animation: vs-bg-pulse     600ms ease; }
+  &.is-wrong   { animation: vs-bg-pulse-red 600ms ease; }
+  &.has-time-bomb .vs-timer-big { animation: vs-shake 0.3s infinite; }
 }
 
-.vs-hud { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
-.vs-hud__side { display: flex; align-items: center; gap: 0.75rem; }
-.vs-hud__center { justify-self: center; }
+// ─── HUD (mismo patrón que binary/precision) ─────────────────────────────────
 
-.vs-timer {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 3rem;
-  line-height: 1;
-  color: var(--vs-accent-purple, #9b59b6);
-  transition: color 200ms ease;
-
-  &.is-low {
-    color: var(--vs-accent-red, #e74c3c);
-    animation: pulse 1s infinite;
-  }
-}
-
-.vs-duel__versus {
+.vs-hud {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  gap: 1.5rem;
   align-items: center;
-  padding: 1rem;
-  background: rgba(155, 89, 182, 0.04);
-  border: 1px solid rgba(155, 89, 182, 0.18);
-  border-radius: 16px;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--vs-border);
+}
+.vs-hud__left   { display: flex; align-items: center; gap: 18px; }
+.vs-hud__center { display: flex; justify-content: center; }
+.vs-hud__right  { display: flex; align-items: center; gap: 18px; justify-content: flex-end; }
+
+.vs-hud__round {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--vs-text-muted);
+  text-transform: uppercase;
 }
 
-.vs-duel__player { text-align: center; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
-.vs-duel__vs { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--vs-text-muted); }
+.vs-timer-big {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--vs-accent-purple);
+  letter-spacing: 0.04em;
+  transition: color 200ms ease;
+
+  &__unit {
+    font-size: 22px;
+    color: var(--vs-text-muted);
+    margin-left: 4px;
+  }
+
+  &.is-low {
+    color: var(--vs-accent-red);
+    animation: vs-pulse 0.85s ease-in-out infinite;
+  }
+}
+
+.vs-streak-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 6px 16px;
+  border: 1px solid var(--vs-border);
+  border-radius: var(--vs-radius-sm);
+  background: var(--vs-bg-surface);
+  transition: all 200ms ease;
+
+  &[data-active='true'] {
+    border-color: var(--vs-accent-purple);
+    box-shadow: 0 0 16px rgba(123,45,139,0.4);
+  }
+}
+.vs-streak-chip__x     { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--vs-accent-purple); }
+.vs-streak-chip__num   { font-size: 22px; font-weight: 600; color: var(--vs-text-primary); }
+.vs-streak-chip__label { font-size: 10px; letter-spacing: 0.18em; color: var(--vs-text-muted); margin-left: 6px; }
+
+// ─── Versus bar ─────────────────────────────────────────────────────────────
+
+.vs-versus-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 16px 24px;
+  background: rgba(155,89,182,0.04);
+  border: 1px solid rgba(155,89,182,0.18);
+  border-radius: var(--vs-radius-lg);
+}
+
+.vs-versus-bar__side {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+
+  &--opp { direction: rtl; }
+  &--opp > * { direction: ltr; }
+}
+
+.vs-versus-bar__label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  color: var(--vs-text-muted);
+}
+
+.vs-versus-bar__placeholder { min-width: 1px; }
+
+.vs-versus-bar__center { display: flex; justify-content: center; }
+
+.vs-versus-bar__vs {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: var(--vs-accent-purple);
+  text-shadow: 0 0 14px rgba(123,45,139,0.5);
+  letter-spacing: 0.05em;
+}
+
+.vs-lifebar--right { flex-direction: row-reverse; }
+
+// ─── Pregunta ────────────────────────────────────────────────────────────────
+
+.vs-duel-question {
+  text-align: center;
+  padding: 12px 0 4px;
+}
+
+.vs-q-text {
+  font-size: 32px;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin: 8px 0 0;
+}
+
+// ─── Arena con panel lateral ────────────────────────────────────────────────
 
 .vs-sabotage__arena {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr 280px;
   gap: 1.5rem;
   align-items: stretch;
 }
@@ -56,45 +155,43 @@
   flex-direction: column;
   gap: 1rem;
   align-items: center;
+  min-width: 0;
 }
 
-.vs-binary-arena {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  width: 100%;
-}
+// ─── Pill purple (override del global) ──────────────────────────────────────
 
 .vs-pill--purple {
-  background: rgba(155, 89, 182, 0.15);
-  color: var(--vs-accent-purple, #9b59b6);
+  background: rgba(123,45,139,0.15);
+  color: var(--vs-accent-purple);
 }
 
-.vs-error {
-  padding: 0.6rem 1rem;
-  background: rgba(231, 76, 60, 0.12);
-  border: 1px solid var(--vs-accent-red, #e74c3c);
-  color: var(--vs-accent-red, #e74c3c);
-  border-radius: 8px;
-  font-size: 0.9rem;
-  text-align: center;
-}
+.vs-pill--purple .vs-pill__dot { background: var(--vs-accent-purple); }
+
+// ─── Notice (sabotaje activado) ─────────────────────────────────────────────
 
 .vs-notice {
+  align-self: center;
   padding: 0.5rem 1rem;
-  background: rgba(155, 89, 182, 0.12);
-  border: 1px solid var(--vs-accent-purple, #9b59b6);
-  color: var(--vs-accent-purple, #9b59b6);
-  border-radius: 8px;
-  font-size: 0.85rem;
+  background: rgba(123,45,139,0.12);
+  border: 1px solid var(--vs-accent-purple);
+  color: var(--vs-text-primary);
+  border-radius: var(--vs-radius-md);
+  font-size: 0.9rem;
   text-align: center;
+  letter-spacing: 0.02em;
+  animation: vs-fade-in 220ms ease;
 }
 
-.vs-loading {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--vs-text-secondary, #aaa);
+@keyframes vs-shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-3px); }
+  75%      { transform: translateX(3px); }
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.05); } }
-@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
+// ─── Responsive ─────────────────────────────────────────────────────────────
+
+@media (max-width: 860px) {
+  .vs-sabotage__arena {
+    grid-template-columns: 1fr;
+  }
+}

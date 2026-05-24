@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { UpperCasePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DuelService } from '../../../../core/services/duel.service';
@@ -10,6 +11,7 @@ import {
   DuelEvent,
   EffectAppliedPayload,
   MatchEndPayload,
+  PlayerRoundOutcome,
   PlayerRuntimeSnapshot,
   QuestionPayload,
   RoundResultPayload,
@@ -24,7 +26,7 @@ type Phase = 'connecting' | 'idle' | 'answered' | 'between' | 'ended';
 @Component({
   selector: 'app-sabotage',
   standalone: true,
-  imports: [RouterLink, SabotagePanelComponent, EffectIndicatorComponent],
+  imports: [RouterLink, UpperCasePipe, SabotagePanelComponent, EffectIndicatorComponent],
   templateUrl: './sabotage.html',
   styleUrl: './sabotage.scss',
 })
@@ -44,6 +46,7 @@ export class Sabotage implements OnInit, OnDestroy {
   readonly secondsLeft = signal<number>(0);
   readonly pickedOptionId = signal<string | null>(null);
   readonly correctOptionId = signal<string | null>(null);
+  readonly lastOutcomes = signal<PlayerRoundOutcome[]>([]);
   readonly errorMsg = signal<string | null>(null);
   readonly notice = signal<string | null>(null);
 
@@ -61,6 +64,15 @@ export class Sabotage implements OnInit, OnDestroy {
   readonly canActivateSabotage = computed(() =>
     this.phase() === 'idle' && this.selfTokens() > 0 && this.pickedOptionId() === null
   );
+
+  readonly selfOutcome = computed<PlayerRoundOutcome | null>(() => {
+    const id = this.selfId();
+    return this.lastOutcomes().find((o) => o.userId === id) ?? null;
+  });
+  readonly oppOutcome = computed<PlayerRoundOutcome | null>(() => {
+    const id = this.selfId();
+    return this.lastOutcomes().find((o) => o.userId !== id) ?? null;
+  });
 
   private sub?: Subscription;
   private timer?: ReturnType<typeof setInterval>;
@@ -140,6 +152,7 @@ export class Sabotage implements OnInit, OnDestroy {
     this.roundNumber.set(payload.roundNumber);
     this.pickedOptionId.set(null);
     this.correctOptionId.set(null);
+    this.lastOutcomes.set([]);
     this.errorMsg.set(null);
     this.notice.set(null);
     this.phase.set('idle');
@@ -156,6 +169,7 @@ export class Sabotage implements OnInit, OnDestroy {
 
   private onRoundResult(payload: RoundResultPayload): void {
     this.correctOptionId.set(payload.reveal.correctOptionId ?? null);
+    this.lastOutcomes.set(payload.outcomes);
     this.phase.set('between');
     this.stopTimer();
     this.activeEffectAgainstSelf.set(null);

@@ -5,7 +5,7 @@ Depende de: `auth` (para validar JWT)
 Estado:
 - ✅ Infraestructura base STOMP + JWT (PR #89, Sprint 3).
 - ✅ Handlers de lobby/matchmaking (PR #90, ver [módulo match](match.md)).
-- 🚧 Handlers de modos multijugador (Binary Duel #91, Precision Duel #92, Sabotaje #93).
+- ✅ Handlers de modos multijugador (Binary Duel #91, Precision Duel #92, Sabotaje #93) — ver [`duel.md`](duel.md). `DuelWebSocketController` expone `/app/match/answer` y `/app/match/sabotage`; los eventos `QUESTION`, `ROUND_RESULT`, `MATCH_END`, `SABOTAGE_ACTIVATED`, `EFFECT_APPLIED`, `SABOTAGE_REJECTED`, `ANSWER_RESULT` viajan envueltos en `MatchEventEnvelope`.
 
 
 ---
@@ -280,9 +280,7 @@ Sin token o con un token modificado deberías ver el frame ERROR `Missing Author
 ## Trabajo pendiente (PRs siguientes)
 
 - ~~**PR #90 (lobby + matchmaking):** crear `MatchService` + `MatchWebSocketController` con handlers `/app/match/ready` y `/app/match/abandon`; eliminar `EchoController`.~~ ✅ Cerrado.
-- **PR #91 (Binary Duel):** handler `/app/match/answer` y emisor de eventos `QUESTION` / `ROUND_RESULT` / `MATCH_END`.
-- **PR #92 (Precision Duel):** misma estructura adaptada a preguntas numéricas.
-- **PR #93 (Sabotaje):** handler `/app/match/sabotage` y uso de `convertAndSendToUser` para aplicar efectos solo al jugador objetivo.
+- ~~**PRs #91/#92/#93 (modos multijugador):** handlers `/app/match/answer` y `/app/match/sabotage`, emisores de `QUESTION` / `ROUND_RESULT` / `MATCH_END` / `SABOTAGE_*`~~ ✅ Cerrado (módulo [`duel`](duel.md)).
 
 ---
 

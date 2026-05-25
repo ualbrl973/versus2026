@@ -18,26 +18,6 @@
     }
   </nav>
 
-<div class="vs-topbar">
-  <div class="vs-mark">
-    VER<span class="vs-mark__slash">/</span>SUS
-    @if (role() === 'admin') {
-      <span class="vs-pill vs-pill--err" style="margin-left: 14px">
-        <span class="vs-pill__dot"></span>ADMIN
-      </span>
-    }
-  </div>
-
-  <nav class="vs-topbar__nav">
-    @for (item of items(); track item[0]) {
-      @if (routeFor(item[0]); as route) {
-        <a [routerLink]="route" [class.active]="active() === item[0]">{{ item[1] }}</a>
-      } @else {
-        <a [class.active]="active() === item[0]" style="opacity: 0.5; cursor: not-allowed">{{ item[1] }}</a>
-      }
-    }
-  </nav>
-
   <div class="vs-topbar__actions">
     <div class="vs-notification-center" [class.is-open]="notificationsOpen()">
       <button
@@ -97,7 +77,7 @@
             <div class="vs-notification-center__list vs-scroll">
               @for (notification of notificationItems(); track notification.id) {
                 @if (notification.route) {
-                  
+                  <a
                     class="vs-notification-item"
                     [class.is-unread]="!notification.read"
                     [class.tone-info]="notification.tone === 'info'"

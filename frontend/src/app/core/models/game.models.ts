@@ -72,6 +72,21 @@ export interface PrecisionAnswerResponse {
   achievementsUnlocked?: Achievement[];
 }
 
+export interface PracticeAnswerRequest {
+  questionId: string;
+  optionId?: string;
+  value?: number;
+}
+
+export interface PracticeAnswerResponse {
+  correct: boolean;
+  correctOptionId?: string;
+  correctValue?: number;
+  deviationPercent?: number;
+  unit?: string;
+  explanation?: string | null;
+}
+
 export interface PlayerStats {
   mode: GameMode;
   gamesPlayed: number;

@@ -16,6 +16,7 @@
 | Partidas & matchmaking | [modules/match.md](modules/match.md) | ✅ Lobby + matchmaking (PR #90) |
 | Duelos en vivo (modos PvP) | [modules/duel.md](modules/duel.md) | ✅ Sprint 4 (PRs #91 #92 #93) |
 | Estadísticas & ranking | [modules/stats.md](modules/stats.md) | ✅ Sprint 1-2 |
+| Práctica (modo libre) | [modules/practice.md](modules/practice.md) | ✅ implementado |
 | Logros | [modules/achievements.md](modules/achievements.md) | ✅ Sprint 3 |
 | Administración | [modules/admin.md](modules/admin.md) | ✅ implementado |
 | Moderación | [modules/moderation.md](modules/moderation.md) | 🚧 Sprint 4 |

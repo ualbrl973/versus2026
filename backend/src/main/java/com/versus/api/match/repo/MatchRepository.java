@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,6 +15,10 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
 
     Optional<Match> findByRoomCode(String roomCode);
 
+    // Panel de administración
+    long countByCreatedAtAfter(Instant from);
+
+    // Historial y estadísticas de usuario
     @Query(value = """
             SELECT m.* FROM matches m
             JOIN match_players mp ON mp.match_id = m.id

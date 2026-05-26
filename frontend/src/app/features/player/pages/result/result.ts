@@ -25,7 +25,7 @@ export interface ResultState {
   livesRemaining?: number;
   avgDeviation?: number | null;
   opponent?: OpponentRecap;
-  reason?: 'NORMAL' | 'DISCONNECT' | 'MAX_ROUNDS_TIE';
+  reason?: 'NORMAL' | 'DISCONNECT' | 'MAX_ROUNDS_TIE' | 'NO_QUESTION';
   sabotagesUsed?: number;
 }
 
@@ -71,6 +71,7 @@ export class Result {
     const r = this.state()?.reason;
     if (r === 'DISCONNECT') return 'Tu rival se desconectó.';
     if (r === 'MAX_ROUNDS_TIE') return 'Se alcanzó el límite de rondas.';
+    if (r === 'NO_QUESTION') return 'La partida no pudo continuar: no hay preguntas disponibles para este modo.';
     return null;
   });
 

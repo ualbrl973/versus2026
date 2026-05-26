@@ -2,6 +2,7 @@ package com.versus.api.duel;
 
 import com.versus.api.achievements.dto.AchievementResponse;
 import com.versus.api.common.exception.ApiException;
+import com.versus.api.common.exception.ErrorCode;
 import com.versus.api.duel.dto.AnswerMessage;
 import com.versus.api.duel.dto.AnswerResultPayload;
 import com.versus.api.duel.dto.EffectAppliedPayload;
@@ -140,7 +141,18 @@ public class DuelOrchestrator {
                 return;
             }
 
-            Question question = questions.findRandomActiveQuestion(engine.questionType(), null);
+            Question question;
+            try {
+                question = questions.findRandomActiveQuestion(engine.questionType(), null);
+            } catch (ApiException ex) {
+                if (ex.getCode() == ErrorCode.NOT_FOUND) {
+                    log.warn("Match {} ending early: no active question of type {} available",
+                            matchId, engine.questionType());
+                    endMatchNoQuestion(duel);
+                    return;
+                }
+                throw ex;
+            }
             Instant now = Instant.now();
 
             DuelRoundState round = new DuelRoundState(n, question.getId(), now, computeDeadline(duel, now));
@@ -377,6 +389,10 @@ public class DuelOrchestrator {
 
     private void endMatchMaxRounds(DuelMatchState duel) {
         finalize(duel, MatchEndPayload.REASON_MAX_ROUNDS_TIE);
+    }
+
+    private void endMatchNoQuestion(DuelMatchState duel) {
+        finalize(duel, MatchEndPayload.REASON_NO_QUESTION);
     }
 
     private void endMatchDisconnect(DuelMatchState duel, UUID disconnectedUserId) {

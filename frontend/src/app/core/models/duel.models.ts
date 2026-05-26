@@ -62,7 +62,7 @@ export interface FinalStatsPayload {
 
 export interface MatchEndPayload {
   winnerUserId: string | null;
-  reason: 'NORMAL' | 'DISCONNECT' | 'MAX_ROUNDS_TIE';
+  reason: 'NORMAL' | 'DISCONNECT' | 'MAX_ROUNDS_TIE' | 'NO_QUESTION';
   stats: FinalStatsPayload[];
 }
 
